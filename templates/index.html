@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>STOCKS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}">
+</head>
+<body>
+<main>
+<h1>STOCKS Overview</h1>
+    <div class="surround">
+        <h2>General Info</h2>
+        <p><strong>Team Name:</strong> {{ data.game_info.teamnickname}}</p>
+        <p><strong>Date Updated:</strong> {{ data.dataresult.record.recorddate}}</p>
+        <p><strong>Jump To: </strong><a href="#breakdown">Stock Breakdown</a></p>
+        <p><strong>Jump To: </strong><a href="#realized">Realized Gains/Losses</a></p>
+        <p><strong>Jump To: </strong><a href="#recent">Recent Transactions</a></p>
+    </div>
+    <div class="surround">
+        <h2>Rankings World</h2>
+        <p><strong>Region Rankings:</strong> You are placed {{ data.game_info.regionranktext }} positions</p>
+        <p><strong>Coordinator Rankings:</strong> You are placed {{ data.game_info.coordrank }} positions</p>
+    </div>
+    <div class="surround">
+        <h2>Total Money Center</h2>
+        <p><strong>Stock Value:</strong> {{data.dataresult.record.total_longs}}</p>
+        <p><strong>Shorts Value</strong> {{data.dataresult.record.value_shorts}}</p>
+        <p><strong>Cash Balance:</strong> {{ data.dataresult.record.cash_balance}}</p>
+        <p><strong>Total Equity:</strong> {{ data.dataresult.record.total_equity}}</p>
+    </div>
+    <div class="surround">
+        <h2>General Stock Info</h2>
+        <p><strong>Stock Count:</strong> {{data.transactions.record|length}}</p>
+        <p><strong>Top Performer:</strong> <a class="{{ highlight(data.analytics.topPerformer.per_unrealized_gainslosses) }}" href="#{{data.analytics.topPerformer.id}}">{{data.analytics.topPerformer.ticker}}: {{ data.analytics.topPerformer.per_unrealized_gainslosses }}%</a></p>
+        <p><strong>Worst Performer:</strong> <a class="{{ highlight(data.analytics.worstPerformer.per_unrealized_gainslosses) }}" href="#{{data.analytics.worstPerformer.id}}">{{data.analytics.worstPerformer.ticker}}: {{ data.analytics.worstPerformer.per_unrealized_gainslosses }}%</a></p>
+    </div>
+    <h1 id="breakdown">Stock Breakdown</h1>
+    {% for stock in data.transactions.record %}
+        <div id="{{ stock.id }}" class="surround">
+            <h2>{{ stock.ticker }}</h2>
+            <p><strong>Stock Type:</strong> {{ stock.position }}</p>
+            <p><strong>Shares Owned:</strong> {{ stock.shares_value.replace('-','') }}</p>
+            <p><strong>Original Purchase Price:</strong> ${{ stock.netcost_pershare }}</p>
+            <p><strong>Current Stock Price:</strong> ${{ stock.currentprice_pershare }}</p>
+            <p class="{{ highlight(stock.per_unrealized_gainslosses)}}"><strong>Unrealized Gains/Losses:</strong> {{ stock.ticker }} has gone {{ 'down' if stock.per_unrealized_gainslosses.startswith('-') else 'up' }} {{ stock.per_unrealized_gainslosses }}%<br>
+            This resulted in a {{ 'loss' if stock.per_unrealized_gainslosses.startswith('-') else 'profit'}} of {{ stock.unrealized_gainslosses.replace('-','') }}</p>
+        </div>
+    {% endfor %}
+    <h1 id="recent">Recent Transactions</h1>
+    {% for stock in data.recent %}
+        <div id="{{ stock.id }}" class="surround">
+            <h2>{{ stock.ticker }}</h2>
+            <p><strong>Trade Type:</strong> {{ stock.trade_type }}</p>
+            <p><strong>Shares Owned:</strong> {{ stock.shares_value }}</p>
+            <p><strong>Transaction Time:</strong> {{ stock.trade_entered }}</p>
+            <p><strong>Confirmation:</strong> {{ stock.confirmation }}</p>
+            <p><strong>Description:</strong> {{ stock.description }}</p>
+        </div>
+    {% endfor %}
+    <h1 id="realized">Realized Gains/Losses</h1>
+    {% for stock in data.gainslosses %}
+        <div id="{{ stock.id }}" class="surround">
+            <h2>{{ stock.ticker }}</h2>
+            <p><strong>Shares Owned</strong>  {{ stock.shares_value.replace('-','') }}</p>
+            <p><strong>Original Purchase Price:</strong> ${{ stock.netcostpershare }}</p>
+            <p><strong>Current Stock Price:</strong> ${{ stock.netsalepershare }}</p>
+            <p><strong>{{'Loss' if stock.gains.startswith('-') else 'Profit' }}:</strong><span class="{{ highlight(stock.gainpercent)}}"> ${{ stock.gains }}</span></p>
+        <p><strong>{{'Loss' if stock.gains.startswith('-') else 'Profit' }} percentage:</strong><span class="{{ highlight(stock.gainpercent)}}"> {{ stock.gainpercent }}</span></p>
+        </div>
+    {% endfor %}
+</main>
+<script src="{{url_for('static', filename='darkmode.js')}}"></script>
+</body>
+</html>
