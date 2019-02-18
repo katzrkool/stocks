@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for
 from json import load
 from os import path
 from stocks.scraper import Scraper
@@ -21,6 +21,7 @@ def scrape():
         data = load(f)
     s = Scraper(data['username'], data['password'])
     s.go()
+    return redirect(url_for('index'), code=303)
 
 
 # for highlighting units

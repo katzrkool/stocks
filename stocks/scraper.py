@@ -44,11 +44,7 @@ class Scraper:
 
     def getTransactions(self) -> list:
         data = self.fetchXml('Administration/game/a_trad/cont_transnotes')
-        return [self.fixTransactions(i) for i in data['transactions']['record'][:4]]
-
-    def fixTransactions(self, stock: dict) -> dict:
-        stock['id'] = stock['per_unrealized_gainslosses'] + stock['cusipid']
-        return stock
+        return data['transactions']['record'][:4]
 
     def fetchXml(self, url: str) -> dict:
         query = {'tpl': url,

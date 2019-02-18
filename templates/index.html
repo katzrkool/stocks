@@ -48,7 +48,7 @@
     {% endfor %}
     <h1 id="recent">Recent Transactions</h1>
     {% for stock in data.recent %}
-        <div id="{{ stock.id }}" class="surround">
+        <div id="{{ stock.confirmation }}" class="surround">
             <h2>{{ stock.ticker }}</h2>
             <p><strong>Trade Type:</strong> {{ stock.trade_type }}</p>
             <p><strong>Shares Owned:</strong> {{ stock.shares_value }}</p>

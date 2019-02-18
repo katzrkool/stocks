@@ -35,10 +35,8 @@ function getCookie(c_name) {
 
 function triggerDarkMode(on) {
     if (on) {
-        changeSpanText(true);
         setCookie('darkmode', 'true');
     } else {
-        changeSpanText(false);
         setCookie('darkmode', 'false');
     }
     document.body.classList.toggle('darkmode');
