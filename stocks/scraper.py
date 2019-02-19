@@ -61,7 +61,7 @@ class Scraper:
     def getSummary(self) -> dict:
         today = datetime.today()
         query = {'tpl': 'Administration/game/a_trad/pa_xml',
-                 'fromdate': (today - timedelta(days=2)).strftime('%-m/%-d/%Y'),
+                 'fromdate': (today - timedelta(days=4)).strftime('%-m/%-d/%Y'),
                  'todate': today.strftime('%-m/%-d/%Y'),
                  'ticks': 'DAILY',
                  '_': self.unixStamp()}
@@ -90,8 +90,6 @@ class Scraper:
         data = data['transactions']['record']
 
         return [self.fixRealizedValues(i) for i in data]
-
-    # this stuff isn't fetching
 
     def fixRealizedValues(self, stock: dict) -> dict:
         for i in ['netcostpershare', 'netsalepershare', 'originalnetcost', 'netproceeds', 'gains']:
