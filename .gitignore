@@ -219,3 +219,5 @@ fabric.properties
 
 # Personal data is stored in json files
 *.json
+
+code.txt
