@@ -23,7 +23,7 @@ def findIP():
 @app.route('/')
 def index():
     if not security():
-        return f'Submit a POST request to <a href={url_for("verify")}>/verify</a> with param "security"= the contents of {filename}'
+        return f'Submit a POST request to <a href={url_for("verify")}>/verify</a> with param "stocks_security"= the contents of {filename}'
 
     with open(path.join(currentDir, '../', 'data.json'), 'r') as f:
         data = load(f)
@@ -43,7 +43,7 @@ def verify():
         return app.send_static_file('cookie.html')
     if request.form['secret'] == fetchSecurityCookie():
         resp = make_response(redirect(url_for('index')))
-        resp.set_cookie('security', fetchSecurityCookie(), expires=1703716200, secure=True)
+        resp.set_cookie('stocks_security', fetchSecurityCookie(), expires=1703716200, secure=True)
         return resp
     else:
         return 'INVALID COOKIE!'
@@ -65,8 +65,8 @@ def security() -> bool:
         with open(path.join(currentDir, '../', filename), 'w') as f:
             f.write(randomword(20))
 
-    if request.cookies.get('security'):
-        if request.cookies.get('security') == fetchSecurityCookie():
+    if request.cookies.get('stocks_security'):
+        if request.cookies.get('stocks_security') == fetchSecurityCookie():
             return True
     else:
         return False
