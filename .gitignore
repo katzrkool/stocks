@@ -221,3 +221,5 @@ fabric.properties
 *.json
 
 code.txt
+
+*.wsgi
