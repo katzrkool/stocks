@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, make_response
 from json import load
-from os import path
+from os import path, stat
 from stocks.scraper import Scraper
 from socket import gethostbyname
 from random import choice
@@ -61,7 +61,7 @@ def fetchSecurityCookie() -> str:
 def security() -> bool:
     if request.remote_addr == serverIP or request.remote_addr == '127.0.0.1':
         return True
-    if not path.exists(path.join(currentDir, '../', filename)):
+    if not stat(path.join(currentDir, '../', filename)).st_size == 0:
         with open(path.join(currentDir, '../', filename), 'w') as f:
             f.write(randomword(20))
 
