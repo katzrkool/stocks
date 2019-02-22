@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, redirect, url_for, make_respo
 from json import load
 from os import path
 from stocks.scraper import Scraper
-from socket import gethostbyname
 from random import choice
 from string import ascii_lowercase
 
@@ -13,10 +12,10 @@ serverIP = None
 securityCookie = None
 filename = 'code.txt'
 
-
+# Below are the API endpoints
 @app.route('/')
 def index():
-    if not security():
+    if not authenticate():
         return f'Submit a POST request to <a href={url_for("verify")}>/verify</a> with param "stocks_security"= the contents of {filename}'
 
     with open(path.join(currentDir, '../', 'data.json'), 'r') as f:
@@ -26,7 +25,7 @@ def index():
 
 @app.route('/scrape', methods=['POST'])
 def scrape():
-    if security():
+    if authenticate():
         s = Scraper(request.form['username'], request.form['password'])
         s.go()
         return '200 OK'
@@ -45,6 +44,15 @@ def verify():
         return 'INVALID COOKIE!'
 
 
+@app.route('/reset')
+def reset():
+    if authenticate():
+        generateCookie()
+        return '200 OK'
+    return '403 NO', 403
+
+
+# Below are helper functions for endpoints
 def fetchSecurityCookie() -> str:
     global securityCookie
     if not securityCookie:
@@ -54,12 +62,16 @@ def fetchSecurityCookie() -> str:
     return securityCookie
 
 
-def security() -> bool:
+def generateCookie():
+    with open(path.join(currentDir, '../', filename), 'w') as f:
+        f.write(randomword(20))
+
+
+def authenticate() -> bool:
     if request.remote_addr in ['127.0.0.1', '192.168.0.1']:
         return True
     if not path.exists(path.join(currentDir, '../', filename)):
-        with open(path.join(currentDir, '../', filename), 'w') as f:
-            f.write(randomword(20))
+        generateCookie()
 
     if request.cookies.get('stocks_security'):
         if request.cookies.get('stocks_security') == fetchSecurityCookie():
