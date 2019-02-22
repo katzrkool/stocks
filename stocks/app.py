@@ -66,6 +66,8 @@ def generateCookie():
     with open(path.join(currentDir, '../', filename), 'w') as f:
         f.write(randomword(20))
 
+    fetchSecurityCookie()
+
 
 def authenticate() -> bool:
     if request.remote_addr in ['127.0.0.1', '192.168.0.1']:
