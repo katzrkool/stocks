@@ -14,12 +14,6 @@ securityCookie = None
 filename = 'code.txt'
 
 
-@app.before_first_request
-def findIP():
-    global serverIP
-    serverIP = gethostbyname('lkellar.org')
-
-
 @app.route('/')
 def index():
     if not security():
@@ -32,9 +26,11 @@ def index():
 
 @app.route('/scrape', methods=['POST'])
 def scrape():
-    s = Scraper(request.form['username'], request.form['password'])
-    s.go()
-    return '200 OK'
+    if security():
+        s = Scraper(request.form['username'], request.form['password'])
+        s.go()
+        return '200 OK'
+    return '403 NO', 403
 
 
 @app.route('/verify', methods=['GET', 'POST'])
@@ -59,7 +55,7 @@ def fetchSecurityCookie() -> str:
 
 
 def security() -> bool:
-    if request.remote_addr == serverIP or request.remote_addr == '127.0.0.1':
+    if request.remote_addr in ['127.0.0.1', '192.168.0.1']:
         return True
     if not path.exists(path.join(currentDir, '../', filename)):
         with open(path.join(currentDir, '../', filename), 'w') as f:
