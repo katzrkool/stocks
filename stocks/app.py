@@ -53,9 +53,9 @@ def reset():
 
 
 # Below are helper functions for endpoints
-def fetchSecurityCookie() -> str:
+def fetchSecurityCookie(force: bool = False) -> str:
     global securityCookie
-    if not securityCookie:
+    if not securityCookie or force:
         with open(path.join(currentDir, '../', filename), 'r') as f:
             securityCookie = f.read()
 
@@ -66,7 +66,7 @@ def generateCookie():
     with open(path.join(currentDir, '../', filename), 'w') as f:
         f.write(randomword(20))
 
-    fetchSecurityCookie()
+    fetchSecurityCookie(True)
 
 
 def authenticate() -> bool:
