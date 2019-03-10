@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import xmltodict
 from os import path
 from json import dump
-from stocks.analysis import Analyzer
+from .util import Analyzer, AuthError
 
 
 class Scraper:
@@ -37,7 +37,9 @@ class Scraper:
         data = {'ACCOUNTNO': username,
                 'USER_PIN': password,
                 'SECURITY_STRING': ''}
-        self.s.post('https://www.stockmarketgame.org/cgi-bin/hailogin', data=data)
+        r = self.s.post('https://www.stockmarketgame.org/cgi-bin/hailogin', data=data)
+        if 'invalid User ID' in r.text:
+            raise AuthError()
 
     def unixStamp(self)-> str:
         return str(round(time()))
@@ -124,7 +126,3 @@ class Scraper:
         a = Analyzer(data)
         return a.go()
 
-
-if __name__ == '__main__':
-    s = Scraper('***REMOVED***', '***REMOVED***')
-    s.go()

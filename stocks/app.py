@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, make_response
 from json import load
 from os import path
-from stocks.scraper import Scraper
-from socket import gethostbyname
+from .scraper import Scraper
+from .util import AuthError
 from random import choice
 from string import ascii_lowercase
 
@@ -17,20 +17,38 @@ filename = 'code.txt'
 @app.route('/')
 def index():
     if not security():
-        return f'Submit a POST request to <a href={url_for("verify")}>/verify</a> with param "stocks_security"= the contents of {filename}'
+        return returnVerify()
 
-    with open(path.join(currentDir, '../', 'data.json'), 'r') as f:
-        data = load(f)
-    return render_template('index.html', data=data, highlight=highlight)
+    dataPath = path.join(currentDir, '../', 'data.json')
+    if path.exists(dataPath):
+        with open(dataPath, 'r') as f:
+            data = load(f)
+        return render_template('index.html', data=data, highlight=highlight)
+    else:
+        return redirect(url_for('scrape')), 307
 
 
-@app.route('/scrape', methods=['POST'])
+@app.route('/scrape', methods=['GET', 'POST'])
 def scrape():
     if security():
-        s = Scraper(request.form['username'], request.form['password'])
-        s.go()
-        return '200 OK'
-    return '403 NO', 403
+        if request.method == 'POST':
+            try:
+                s = Scraper(request.form['username'], request.form['password'])
+                s.go()
+                if request.form['browser'] == 'true':
+                    return redirect(url_for('index')), 303
+                else:
+                    return '200 OK'
+            except AuthError:
+                return 'Incorrect Username or Password', 403
+
+        else:
+            return app.send_static_file('login.html')
+
+    if request.method == 'POST':
+        return '407 NO', 407
+    else:
+        return returnVerify()
 
 
 @app.route('/verify', methods=['GET', 'POST'])
@@ -67,6 +85,8 @@ def security() -> bool:
     else:
         return False
 
+def returnVerify() -> str:
+    return f'Submit a POST request to <a href={url_for("verify")}>/verify</a> with param "stocks_security"= the contents of {filename}'
 
 def randomword(length):
     return ''.join(choice(ascii_lowercase) for i in range(length))
