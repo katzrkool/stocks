@@ -13,10 +13,10 @@ serverIP = None
 securityCookie = None
 filename = 'code.txt'
 
-
+# Below are the API endpoints
 @app.route('/')
 def index():
-    if not security():
+    if not authenticate():
         return returnVerify()
 
     dataPath = path.join(currentDir, '../', 'data.json')
@@ -30,7 +30,7 @@ def index():
 
 @app.route('/scrape', methods=['GET', 'POST'])
 def scrape():
-    if security():
+    if authenticate():
         if request.method == 'POST':
             try:
                 s = Scraper(request.form['username'], request.form['password'])
@@ -63,21 +63,36 @@ def verify():
         return 'INVALID COOKIE!'
 
 
-def fetchSecurityCookie() -> str:
+@app.route('/reset')
+def reset():
+    if authenticate():
+        generateCookie()
+        return '200 OK'
+    return '403 NO', 403
+
+
+# Below are helper functions for endpoints
+def fetchSecurityCookie(force: bool = False) -> str:
     global securityCookie
-    if not securityCookie:
+    if not securityCookie or force:
         with open(path.join(currentDir, '../', filename), 'r') as f:
             securityCookie = f.read()
 
     return securityCookie
 
 
-def security() -> bool:
+def generateCookie():
+    with open(path.join(currentDir, '../', filename), 'w') as f:
+        f.write(randomword(20))
+
+    fetchSecurityCookie(True)
+
+
+def authenticate() -> bool:
     if request.remote_addr in ['127.0.0.1', '192.168.0.1']:
         return True
     if not path.exists(path.join(currentDir, '../', filename)):
-        with open(path.join(currentDir, '../', filename), 'w') as f:
-            f.write(randomword(20))
+        generateCookie()
 
     if request.cookies.get('stocks_security'):
         if request.cookies.get('stocks_security') == fetchSecurityCookie():
