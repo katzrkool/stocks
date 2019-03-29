@@ -18,10 +18,13 @@ function toggle() {
 }
 
 function darkTest(e) {
-    if (e.matches) {
-        triggerDarkMode(true, false);
-    } else {
-        triggerDarkMode(false, false);
+    // If the user already has a pref set, we don't want to adjust the color based on system pref
+    if (!localStorage.getItem('darkmode')) {
+        if (e.matches) {
+            triggerDarkMode(true, false);
+        } else {
+            triggerDarkMode(false, false);
+        }
     }
 }
 
