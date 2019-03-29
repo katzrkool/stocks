@@ -20,9 +20,9 @@ function toggle() {
 
 function darkTest(e) {
     if (e.matches) {
-        triggerDarkMode(true);
+        triggerDarkMode(true, false);
     } else {
-        triggerDarkMode(false);
+        triggerDarkMode(false, false);
     }
 }
 
