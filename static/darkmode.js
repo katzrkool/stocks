@@ -1,8 +1,6 @@
-function triggerDarkMode(on) {
-    if (on) {
-        localStorage.setItem('darkmode', 'true');
-    } else {
-        localStorage.setItem('darkmode', 'false');
+function triggerDarkMode(on, set=true) {
+    if (set) {
+        localStorage.setItem('darkmode',  on.toString())
     }
     document.body.classList.toggle('darkmode');
 }
@@ -28,8 +26,21 @@ function init() {
     const darkValue = localStorage.getItem('darkmode');
     const mql = window.matchMedia('(prefers-color-scheme: dark)');
     mql.addListener(darkTest);
-    if (darkValue === 'true' || mql.matches) {
-        triggerDarkMode(true);
+
+    // Some of the things in the statements below are redundant, but I really want to make sure someone's preference
+    // doesn't get messed up.
+    if (darkValue) {
+        if (darkValue === 'true') {
+            triggerDarkMode(true);
+        } else if (darkValue === 'false') {
+            triggerDarkMode(false);
+        }
+    } else {
+        if (mql.matches) {
+            triggerDarkMode(true, false);
+        } else {
+            triggerDarkMode(false, false);
+        }
     }
 }
 
