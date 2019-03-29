@@ -2,7 +2,11 @@ function triggerDarkMode(on, set=true) {
     if (set) {
         localStorage.setItem('darkmode',  on.toString())
     }
-    document.body.classList.toggle('darkmode');
+    if (document.body.classList.contains('darkmode')) {
+        document.body.classList.remove('darkmode');
+    } else {
+        document.body.classList.add('darkmode');
+    }
 }
 
 function toggle() {
