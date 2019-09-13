@@ -54,20 +54,7 @@ button {
     min-height: fit-content;
 }
 
-@media only screen and (orientation: portrait) {
-	.surround {
-		width: 92%;
-        margin: 1vh 5vw;
-        font-size: 200%;
-	}
-    .surround > h2 {
-        font-size: 200%;
-    }
-    h1 {
-        font-size: 400%;
-        padding: 5% 10%;
-    }
-}
+
 
 /* Darkmode stuff */
 
