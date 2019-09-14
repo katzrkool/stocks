@@ -48,10 +48,10 @@ class Scraper:
         self.s.get('https://www.stockmarketgame.org/cgi-bin/haipage/page.html', params=query)
 
         # Now, we load in our username/password, and leave security string blank
-        data = {'ACCOUNTNO': username,
-                'USER_PIN': password,
-                'SECURITY_STRING': ''}
-        r = self.s.post('https://www.stockmarketgame.org/cgi-bin/hailogin', data=data)
+        payload = {'ACCOUNTNO': username,
+                   'USER_PIN': password,
+                   'SECURITY_STRING': ''}
+        r = self.s.post('https://www.stockmarketgame.org/cgi-bin/hailogin', data=payload)
 
         # If the site says invalid user id, we also say invalid user id
         if 'invalid User ID' in r.text:
