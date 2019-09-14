@@ -18,7 +18,7 @@ def index():
         except AuthError:
             return 'Incorrect Username or Password', 403
 
-    return app.send_static_file('login.html')
+    return render_template('login.html')
 
 
 # for highlighting units
