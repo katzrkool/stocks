@@ -1,3 +1,4 @@
+from json import load
 from os import path
 from flask import Flask, render_template, request
 from stocks.scraper import Scraper
@@ -19,6 +20,14 @@ def index():
             return 'Incorrect Username or Password', 403
 
     return render_template('login.html')
+
+
+@app.route('/demo')
+def demo():
+    with open(path.join(currentDir, '../', 'demo.json')) as f:
+        scraped_data = load(f)
+
+    return render_template('index.html', data=scraped_data, highlight=highlight)
 
 
 # for highlighting units

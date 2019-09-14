@@ -217,9 +217,8 @@ fabric.properties
 # Editor-based Rest Client
 .idea/httpRequests
 
-# Personal data is stored in json files
-*.json
-
 code.txt
 
 *.wsgi
+
+.vscode
