@@ -107,7 +107,7 @@ class Scraper:
         data = self.s.get('https://www.stockmarketgame.org/cgi-bin/haipage', params=query).text
 
         # also, they return non-valid xml so we must fix it
-        data = data.replace('</html>', '</HTML>')
+        data = data.replace('</html>', '</HTML>').replace('S&P500', 'S&amp;P500')
         data = dict(xmltodict.parse(data)['HTML']['xml']['response'])
         if int(data['dataresult']['noofrecords']) > 1:
             data['dataresult']['record'] = data['dataresult']['record'][-1]
@@ -118,8 +118,13 @@ class Scraper:
         # Hit and return from the account holdings page
         data = self.fetch_xml('Administration/game/a_trad/cont_acctholdings')
         if data['transactions']:
-            data['transactions']['record'] = [self.format_stock_values(i)
-                                              for i in data['transactions']['record']]
+            record = data['transactions']['record']
+
+            # if the record is a single item, put it in a list
+            record = [record] if not isinstance(record, list) else record
+
+            # format each stock value
+            data['transactions']['record'] = [self.format_stock_values(i) for i in record]
             return data
 
         return {}
