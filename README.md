@@ -11,6 +11,20 @@ First, clone the repo and install the dependencies with [pipenv](https://pipenv.
 
 `pipenv install`
 
+Then, you need a config in the root folder of the repo called `config.json`, it should look needs two or three attributes
+
+- An API Key for [Alpha Vantage](https://www.alphavantage.co/support/#api-key) to get current stock prices
+- The current SEC fee per dollar, currently it's $0.0000207 per dollar. It can be found [on their website](https:/www.sec.govdivisions/marketreg/mrfreqreq.shtml#feerate)
+- Optionally, the DSN URL for [Sentry.io](https://sentry.io) if you want to use bug tracking
+
+```json
+{
+    "api_key": "12345jfidjiafjdifj",
+    "sec_fee_per_dollar": 0.0000207,
+    "sentry_dsn" "example.sentry.io"
+}
+```
+
 Start the Flask server (stocks/app,py) and it should be up and running
 
 # Features

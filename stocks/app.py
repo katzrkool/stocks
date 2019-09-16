@@ -1,6 +1,6 @@
 from datetime import date, timedelta
 from json import load
-from os import path, environ
+from os import path
 from flask import Flask, render_template, request, jsonify
 import requests
 import sentry_sdk
@@ -38,21 +38,21 @@ def destroyFormData(data: dict) -> dict:
 
     return data
 
+current_dir = path.dirname(path.realpath(__file__))
+
+with open(path.join(current_dir, '../', 'config.json'), 'r') as f:
+    config = load(f)
 
 # If a sentry URL exists, enable sentry error reporting
-if environ.get('STOCKS_SENTRY_DSN'):
+if 'sentry_dsn' in config:
     sentry_sdk.init(
         before_send=strip_personal_info,
-        dsn=environ.get('STOCKS_SENTRY_DSN'),
+        dsn=config['sentry_dsn'],
         integrations=[FlaskIntegration()]
     )
 
 app = Flask(__name__, static_url_path='/static', static_folder='../static/',
             template_folder='../templates')
-current_dir = path.dirname(path.realpath(__file__))
-
-with open(path.join(current_dir, '../', 'config.json'), 'r') as f:
-    config = load(f)
 
 # Loads an Analyzer with the SEC fee from config and makes it globally available
 analyzer = Analyzer(config['sec_fee_per_dollar'])
@@ -87,7 +87,7 @@ def fetch_stock_price():
     # if the information we were looking for appears, that's great!, return it
     if 'Global Quote' in response:
         return jsonify({'price': response['Global Quote']['05. price']})
-    
+
     # If we hit our API Key limit, return error message
     if 'Note' in response:
         return jsonify({'error': 'API Key hit rate limit, try again in 60 seconds'}), 503
