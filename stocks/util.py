@@ -9,7 +9,8 @@ class Analyzer:
 
         return analytics
 
-    def performance(self, data: dict):
+    @staticmethod
+    def performance(data: dict):
         # Calculates the stock that is doing the best/worst
         top = {}
         worst = {}
@@ -38,17 +39,21 @@ class Analyzer:
                 netcost = float(i['netcost'])
                 stock_id = i['id']
                 # Multiply the base net cost by the SEC fee, add $10, and divide by amount of shares
-                profitable_sell_prices[stock_id] = round(((self.SEC_FEE_PER_DOLLAR * netcost) + \
-                                                (netcost + 10) + 0.01) / float(i['shares_value']), 2)
-                
+                if i['position'].lower().strip() == 'short':
+                    profitable_sell_prices[stock_id] = round(((netcost - 10) - 0.01 - \
+                    (self.SEC_FEE_PER_DOLLAR * netcost)) / float(i['shares_value']), 2)
+
+                else:
+                    profitable_sell_prices[stock_id] = round(((netcost + 10) + 0.01 + \
+                        (self.SEC_FEE_PER_DOLLAR * netcost)) / float(i['shares_value']), 2)
             return profitable_sell_prices
-            
+
         return {}
 
     def calculate_fees(self, stock_value: float) -> float:
         '''
         Inputs a stock's current value, and returns the net fees if sold at that value
-        
+
         Fee price includes the buy price too
         '''
         return round((self.SEC_FEE_PER_DOLLAR *stock_value) + 10.01, 2)
@@ -58,6 +63,6 @@ class AuthError(Exception):
 
     def __init__(self):
         super().__init__('Incorrect username or password!')
-        
+
 class AlphaVantageError(Exception):
     pass

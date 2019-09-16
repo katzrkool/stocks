@@ -8,7 +8,9 @@ async function update_current_price(stock_id, button) {
     // And any viewers, please don't use my API, i've got a small rate limit
     // Instead, check out AlphaVantage! They've got a free API key, and good real time data
     // They're what I'm using
-    const path_name = window.location.pathname.replace('/demo', '');
+    let path_name = window.location.pathname.replace('/demo', '');
+    if (path_name == '/') path_name = '';
+
     const response = await fetch(`${path_name}/price?ticker=${ticker}`);
     if (response.status == 503) {
         window.alert('Sorry! I\'ve used up my limit on fetching stock data! Refresh and try again in 60 seconds. :)');
@@ -28,10 +30,16 @@ async function update_current_price(stock_id, button) {
     // Updating the current price
     price_element.textContent = '$' + price;
 
+    // Get if the position is long or short
+    const position = stock_container.querySelector('.position').textContent;
+
     // Now for gains/losses, so start by getting purchase price
     const purchase_price = parseFloat(stock_container.querySelector('.purchase_price').textContent)
 
-    const difference = price - purchase_price;
+    let difference = price - purchase_price;
+
+    // Make the difference negative of what it is if we are short
+    if (position.toLowerCase().trim() == 'short') difference = -difference;
 
     const difference_percent = (price / purchase_price - 1)
 
@@ -42,7 +50,7 @@ async function update_current_price(stock_id, button) {
         `gainslosses ${difference < 0 ? "negative" : "positive"}`;
 
     // Update the part that says up or down
-    stock_container.querySelector('.updown').textContent = difference < 0 ? "down": "up";
+    stock_container.querySelector('.updown').textContent = difference_percent < 0 ? "down": "up";
 
     // Update the percentage
     stock_container.querySelector('.gainslosses_percent').textContent = formatted_difference_percent;
@@ -58,5 +66,5 @@ async function update_current_price(stock_id, button) {
 
     // Update the part with Fees
     stock_container.querySelector('.profit_loss_sold').textContent = 
-        ((price * shares_owned * difference_percent) - ((SEC_FEE_PER_DOLLAR * shares_owned * price) + 10)).toFixed(2).replace('-', '');
+        ((price * shares_owned * difference_percent * (difference < 0 ? -1 : 1)) - ((SEC_FEE_PER_DOLLAR * shares_owned * price) + 10)).toFixed(2).replace('-', '');
 }

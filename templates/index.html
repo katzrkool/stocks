@@ -45,7 +45,7 @@
         {% for stock in data.transactions.record %}
             <div id="{{ stock.id }}" class="surround">
                 <h2 class="ticker">{{ stock.ticker }}</h2>
-                <p><strong>Stock Type:</strong> {{ stock.position }}</p>
+                <p><strong>Stock Type:</strong> <span class="position">{{ stock.position }}</span></p>
                 <p><strong>Shares Owned:</strong> <span class="shares_owned">{{ stock.shares_value.replace('-','') }}</span></p>
                 <p><strong>Original Purchase Price:</strong> $<span class="purchase_price">{{stock.netcost_pershare }}</span></p>
                 <p><strong>Profitable Sell Price:</strong> ${{ data.analytics.profitable_sell_prices[stock.id] }}</p>
