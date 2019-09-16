@@ -1,6 +1,6 @@
 const SEC_FEE_PER_DOLLAR = parseFloat(document.getElementById('sec_fee').textContent);
 
-async function update_current_price(stock_id) {
+async function update_current_price(stock_id, button) {
     const stock_container = document.getElementById(stock_id)
     const ticker = stock_container.querySelector('.ticker').textContent;
 
@@ -10,8 +10,10 @@ async function update_current_price(stock_id) {
     // They're what I'm using
     const response = await fetch(`/price?ticker=${ticker}`);
     if (response.status == 503) {
-        window.alert('Sorry! I\'ve used up my limit on fetching stock data! Refresh and try again in 60 seconds. :)')
+        window.alert('Sorry! I\'ve used up my limit on fetching stock data! Refresh and try again in 60 seconds. :)');
+        return false;
     }
+    button.style.display = 'none';
     const price = parseFloat((await response.json()).price);
 
     // Get the element that holds the current price data. 
@@ -55,5 +57,5 @@ async function update_current_price(stock_id) {
 
     // Update the part with Fees
     stock_container.querySelector('.profit_loss_sold').textContent = 
-        ((price * shares_owned * difference_percent) - ((SEC_FEE_PER_DOLLAR * shares_owned * price) + 10)).toFixed(2).replace('-', '')
+        ((price * shares_owned * difference_percent) - ((SEC_FEE_PER_DOLLAR * shares_owned * price) + 10)).toFixed(2).replace('-', '');
 }

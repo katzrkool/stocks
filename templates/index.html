@@ -72,7 +72,7 @@
                     ($<span class="profit_loss_sold">{{((((stock.unrealized_gainslosses.replace('$', ''))|float - calculate_fees(stock.currentvalue|float))|string).replace('-', '')) }}</span> if sold)
                 </p>
 
-                <button onclick="this.style.display = 'none'; update_current_price('{{ stock.id }}')">Update Current Price</button>
+                <button onclick="update_current_price('{{ stock.id }}', this);">Update Current Price</button>
             </div>
         {% endfor %}
     {% endif %}
