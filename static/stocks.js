@@ -8,7 +8,8 @@ async function update_current_price(stock_id, button) {
     // And any viewers, please don't use my API, i've got a small rate limit
     // Instead, check out AlphaVantage! They've got a free API key, and good real time data
     // They're what I'm using
-    const response = await fetch(`/price?ticker=${ticker}`);
+    const path_name = window.location.pathname.replace('/demo', '');
+    const response = await fetch(`${path_name}/price?ticker=${ticker}`);
     if (response.status == 503) {
         window.alert('Sorry! I\'ve used up my limit on fetching stock data! Refresh and try again in 60 seconds. :)');
         return false;
