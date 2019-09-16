@@ -29,8 +29,8 @@ class Scraper:
         data = {**holdings, **summary}
 
         data['gainslosses'] = self.get_realized_gains()
-        data['analytics'] = self.analytics(data)
         data['recent'] = self.get_transactions()
+        data['analytics'] = self.analytics(data)
 
         return data
 
@@ -153,6 +153,10 @@ class Scraper:
     @staticmethod
     def format_stock_values(stock: dict) -> dict:
         # formats the data from the holdings page
+        stock['currentvalue'] = str(
+            round(float(stock['currentvalue'].replace(',', '')), 2))
+        stock['netcost'] = str(
+            round(float(stock['netcost'].replace(',', '')), 2))
         stock['currentprice_pershare'] = str(
             round(float(stock['currentprice_pershare'].replace(',', '')), 2))
         stock['netcost_pershare'] = str(

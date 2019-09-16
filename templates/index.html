@@ -47,9 +47,19 @@
                 <p><strong>Stock Type:</strong> {{ stock.position }}</p>
                 <p><strong>Shares Owned:</strong> {{ stock.shares_value.replace('-','') }}</p>
                 <p><strong>Original Purchase Price:</strong> ${{ stock.netcost_pershare }}</p>
+                <p><strong>Profitable Sell Price:</strong> ${{ data.analytics.profitable_sell_prices[stock.id] }}</p>
                 <p><strong>Current Stock Price:</strong> ${{ stock.currentprice_pershare }}</p>
-                <p class="{{ highlight(stock.per_unrealized_gainslosses)}}"><strong>Unrealized Gains/Losses:</strong> {{ stock.ticker }} has gone {{ 'down' if stock.per_unrealized_gainslosses.startswith('-') else 'up' }} {{ stock.per_unrealized_gainslosses }}%<br>
-                This resulted in a {{ 'loss' if stock.per_unrealized_gainslosses.startswith('-') else 'profit'}} of {{ stock.unrealized_gainslosses.replace('-','') }}</p>
+                <p class="{{ highlight(stock.per_unrealized_gainslosses)}}">
+                    {# Multipart unrealized gains/losses section. First, pass the gains/losses value
+                        to the highlight function to determine the color of the paragraph #}
+                    <strong>Unrealized Gains/Losses:</strong>
+                    {# Say if the stock has gone up or down, and the precentage#}
+                    {{ stock.ticker }} has gone {{ 'down' if stock.per_unrealized_gainslosses.startswith('-') else 'up' }} {{ stock.per_unrealized_gainslosses }}%<br>
+                    {# Then say how much in dollars we've profited or lost #}
+                    This resulted in a {{ 'loss' if stock.unrealized_gainslosses.startswith('-') else 'profit'}} of {{ stock.unrealized_gainslosses.replace('-','') }} 
+                    {# Fnally, say what the profit/loss would be if sold #}
+                    (${{ ((((stock.unrealized_gainslosses.replace('$', ''))|float - calculate_fees(stock.currentvalue|float))|string).replace('-', '')) }} if sold)
+                </p>
             </div>
         {% endfor %}
     {% endif %}

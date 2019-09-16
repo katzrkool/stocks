@@ -1,3 +1,5 @@
+SEC_FEE_PER_DOLLAR = 0.0000207
+
 class Analyzer:
     def __init__(self, data: dict):
         self.data = data
@@ -5,6 +7,7 @@ class Analyzer:
     def analyze(self) -> dict:
         analytics = {}
         analytics = {**analytics, **self.performance()}
+        analytics['profitable_sell_prices'] = self.profitable_sell_price()
 
         return analytics
 
@@ -24,6 +27,34 @@ class Analyzer:
 
         return {'topPerformer': top, 'worstPerformer': worst}
 
+    def profitable_sell_price(self) -> dict:
+        '''
+        For all stocks in record, calculates the point at which it's profitable to sell them
+
+        returns: dict of profitable sell price where the stock/record id is the key,
+            and the price (as a float) is the value
+        '''
+        if 'transactions' in self.data:
+            profitable_sell_prices = {}
+            for i in self.data['transactions']['record']:
+                netcost = float(i['netcost'])
+                stock_id = i['id']
+                # Multiply the base net cost by the SEC fee, add $10, and divide by amount of shares
+                profitable_sell_prices[stock_id] = round(((SEC_FEE_PER_DOLLAR * netcost) + \
+                                                (netcost + 10) + 0.01) / float(i['shares_value']), 2)
+                
+            return profitable_sell_prices
+            
+        return {}
+
+    @staticmethod
+    def calculate_fees(stock_value: float) -> float:
+        '''
+        Inputs a stock's current value, and returns the net fees if sold at that value
+        
+        Fee price includes the buy price too
+        '''
+        return round((SEC_FEE_PER_DOLLAR *stock_value) + 10.01, 2)
 
 class AuthError(Exception):
     # Incorrect username and password error

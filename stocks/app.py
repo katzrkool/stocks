@@ -4,7 +4,8 @@ from flask import Flask, render_template, request
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 from stocks.scraper import Scraper
-from stocks.util import AuthError
+from stocks.util import AuthError, Analyzer
+
 
 #pylint: disable=unused-argument
 def strip_personal_info(event, hint):
@@ -55,7 +56,8 @@ def index():
         try:
             s = Scraper(request.form['username'], request.form['password'])
             scraped_data = s.scrape()
-            return render_template('index.html', data=scraped_data, highlight=highlight)
+            return render_template('index.html', data=scraped_data, highlight=highlight,
+                                   calculate_fees=Analyzer.calculate_fees)
         except AuthError:
             return 'Incorrect Username or Password', 403
 
@@ -67,7 +69,8 @@ def demo():
     with open(path.join(currentDir, '../', 'demo.json')) as f:
         scraped_data = load(f)
 
-    return render_template('index.html', data=scraped_data, highlight=highlight)
+    return render_template('index.html', data=scraped_data, highlight=highlight,
+                           calculate_fees=Analyzer.calculate_fees)
 
 
 # for highlighting units
