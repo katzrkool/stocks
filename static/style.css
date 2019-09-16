@@ -46,14 +46,21 @@ h1 {
 
 button {
     padding: 3%;
-    width: 94%;
     border-radius: 50px;
     background-color: rgb(237, 237, 237);
-    border-width: thick;
-    font-size: 300%;
     min-height: fit-content;
 }
 
+.current_price_container {
+    display: inline-flex;
+    line-height: 1;
+    text-align: center;
+}
+
+.last_updated {
+    color: #444444;
+    font-size: 75%;
+}
 
 
 /* Darkmode stuff */

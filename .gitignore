@@ -222,3 +222,5 @@ code.txt
 *.wsgi
 
 .vscode
+
+config.json

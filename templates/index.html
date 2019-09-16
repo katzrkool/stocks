@@ -8,6 +8,7 @@
 </head>
 <body>
 <main>
+<p hidden id="sec_fee">{{sec_fee}}</p>
 <h1>STOCKS Overview</h1>
     <div class="surround">
         <h2>General Info</h2>
@@ -43,23 +44,35 @@
     <h1 id="breakdown">Stock Breakdown</h1>
         {% for stock in data.transactions.record %}
             <div id="{{ stock.id }}" class="surround">
-                <h2>{{ stock.ticker }}</h2>
+                <h2 class="ticker">{{ stock.ticker }}</h2>
                 <p><strong>Stock Type:</strong> {{ stock.position }}</p>
-                <p><strong>Shares Owned:</strong> {{ stock.shares_value.replace('-','') }}</p>
-                <p><strong>Original Purchase Price:</strong> ${{ stock.netcost_pershare }}</p>
+                <p><strong>Shares Owned:</strong> <span class="shares_owned">{{ stock.shares_value.replace('-','') }}</span></p>
+                <p><strong>Original Purchase Price:</strong> $<span class="purchase_price">{{stock.netcost_pershare }}</span></p>
                 <p><strong>Profitable Sell Price:</strong> ${{ data.analytics.profitable_sell_prices[stock.id] }}</p>
-                <p><strong>Current Stock Price:</strong> ${{ stock.currentprice_pershare }}</p>
-                <p class="{{ highlight(stock.per_unrealized_gainslosses)}}">
+                <p>
+                    <div class="current_price_container">
+                        <div class="current_price_label"><strong>Current Stock Price: </strong><br>
+                            <p class="last_updated">(as of {{ most_recent_close_time() }})</p>
+                        </div>
+                    <span class="current_price">${{ stock.currentprice_pershare }}</span></p>
+                    </div>
+                <p class="gainslosses {{ highlight(stock.per_unrealized_gainslosses)}}">
                     {# Multipart unrealized gains/losses section. First, pass the gains/losses value
                         to the highlight function to determine the color of the paragraph #}
                     <strong>Unrealized Gains/Losses:</strong>
-                    {# Say if the stock has gone up or down, and the precentage#}
-                    {{ stock.ticker }} has gone {{ 'down' if stock.per_unrealized_gainslosses.startswith('-') else 'up' }} {{ stock.per_unrealized_gainslosses }}%<br>
+                    {# Say if the stock has gone up or down #}
+                    {{ stock.ticker }} has gone <span class="updown">{{ 'down' if stock.per_unrealized_gainslosses.startswith('-') else 'up' }}</span>
+                    {# and the percentage #}
+                    <span class="gainslosses_percent">{{stock.per_unrealized_gainslosses.replace('-', '') }}</span>% since purchase.<br>
+                    {# Say if it's a profit or loss or loss #}
+                    This resulted in a <span class="profit_loss">{{ 'loss' if stock.unrealized_gainslosses.startswith('-') else 'profit'}}</span> 
                     {# Then say how much in dollars we've profited or lost #}
-                    This resulted in a {{ 'loss' if stock.unrealized_gainslosses.startswith('-') else 'profit'}} of {{ stock.unrealized_gainslosses.replace('-','') }} 
+                    of <span class="profit_total">{{ stock.unrealized_gainslosses.replace('-','') }} </span> 
                     {# Fnally, say what the profit/loss would be if sold #}
-                    (${{ ((((stock.unrealized_gainslosses.replace('$', ''))|float - calculate_fees(stock.currentvalue|float))|string).replace('-', '')) }} if sold)
+                    ($<span class="profit_loss_sold">{{((((stock.unrealized_gainslosses.replace('$', ''))|float - calculate_fees(stock.currentvalue|float))|string).replace('-', '')) }}</span> if sold)
                 </p>
+
+                <button onclick="this.style.display = 'none'; update_current_price('{{ stock.id }}')">Update Current Price</button>
             </div>
         {% endfor %}
     {% endif %}
@@ -90,5 +103,6 @@
         {% endfor %}
     {% endif %}
 </main>
+<script src="{{ url_for('static', filename='stocks.js')}}"></script>
 </body>
 </html>

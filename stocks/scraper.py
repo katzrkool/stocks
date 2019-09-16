@@ -3,13 +3,14 @@ from datetime import datetime, timedelta
 
 import requests
 import xmltodict
-from stocks.util import Analyzer, AuthError
+from stocks.util import AuthError
 
 
 class Scraper:
-    def __init__(self, username: str, password: str):
+    def __init__(self, username: str, password: str, analyzer):
         self.username = username
         self.password = password
+        self.analyzer = analyzer
         self.s = requests.session()
 
     def scrape(self) -> dict:
@@ -30,7 +31,7 @@ class Scraper:
 
         data['gainslosses'] = self.get_realized_gains()
         data['recent'] = self.get_transactions()
-        data['analytics'] = self.analytics(data)
+        data['analytics'] = self.analyzer.analyze(data)
 
         return data
 
@@ -174,9 +175,3 @@ class Scraper:
         data['dataresult']['record']['cash_balance'] = '${:,}'.format(cash - shorts)
         data['dataresult']['record']['value_shorts'] = '${:,}'.format(shorts)
         return data
-
-    @staticmethod
-    def analytics(data: dict) -> dict:
-        # sends data to analyzer for important analysis
-        a = Analyzer(data)
-        return a.analyze()
