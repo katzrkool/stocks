@@ -11,15 +11,21 @@ First, clone the repo and install the dependencies with [pipenv](https://pipenv.
 
 `pipenv install`
 
-Start the Flask server (stocks/app,py) and navigate to `/scrape`. Fill out the form, or send a POST request to `/scrape` with params username and password. Assuming the provided credentials are correct, it should scrape your data!
+Then, you need a config in the root folder of the repo called `config.json`, it should look needs two or three attributes
 
-## Authentication
-To make sure other traders aren't spying on your stock data, the application employs two authentication methods (only one is required).
+- An API Key for [Alpha Vantage](https://www.alphavantage.co/support/#api-key) to get current stock prices
+- The current SEC fee per dollar, currently it's $0.0000207 per dollar. It can be found [on their website](https:/www.sec.govdivisions/marketreg/mrfreqreq.shtml#feerate)
+- Optionally, the DSN URL for [Sentry.io](https://sentry.io) if you want to use bug tracking
 
-- The Request IP is the same as the Server IP, or is localhost. This makes it easy to develop/test AND allows easy access on your local network (if the application is run on the LAN)
-- A cookie with key `stocks_security` and a value that shares the contents of `code.txt`, on the server. To get the cookie. Go to `/verify` and paste in the contents of `code.txt`, which is a file generated in the root application directory after the first request is made. 
+```json
+{
+    "api_key": "12345jfidjiafjdifj",
+    "sec_fee_per_dollar": 0.0000207,
+    "sentry_dsn" "example.sentry.io"
+}
+```
 
-Once one of these two requirements are met, the client will be able to access `/scrape` and the dashboard at `/`
+Start the Flask server (stocks/app,py) and it should be up and running
 
 # Features
 
@@ -39,6 +45,7 @@ This section provides information for each stock owned. It provides
 - Original Purchase Price
 - Current Stock Price (as of yesterday's closing price)
 - Unrealized Gains/Losses
+- And a button to update the current stock price
 
 An example can be seen in the photo below
 
@@ -53,8 +60,3 @@ This section just shows the four most recent transactions from the "Transaction 
 ### Realized Gains/Losses
 
 This pulls data from the Realized Gains/Losses page. It just shows stocks you've bought, then sold, and how well you ended up doing.
-
-![Example of Realized Gains/Losses](screenshots/realized.png)
-
-# Contributing/Future Development
-This project wasn't really intended to be actively developed, and I'm mostly finished with it. BUT, if you want to file a bug, or submit a PR, or fork it and turn it into something more advanced, feel free.

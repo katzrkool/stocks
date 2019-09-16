@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stocks Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<style>
+    main {
+        border-radius: 50px;
+        padding: 5px 20px 20px;
+        background-color: white;
+    }
+
+    body {
+        background-color: #c4c4c4;
+        font-family: sans-serif;
+    }
+
+    h1 {
+        font-weight: 700;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        body {
+            background-color: #515151;
+        }
+        main {
+            background-color: #d3d3d3;
+        }
+    }
+</style>
+<body>
+<main>
+    <h1>Stock Market Game Dashboard</h1>
+    <form action="" method="post">
+        <label for="POST-username">Username:</label>
+        <input id="POST-username" type="text" name="username">
+        <br>
+        <label for="POST-password">Password:</label>
+        <input id="POST-password" type="password" name="password">
+        <br>
+        <input type="hidden" name="browser" value="true">
+        <input type="submit" value="Login">
+    </form>
+    <footer>
+            <p>Source code is available on <a href="https://github.com/katzrkool/stocks">Github</a>. Report <a href="https://github.com/katzrkool/stocks/issues">issues here</a>. This project is licensed under the <a href="https://github.com/katzrkool/stocks/blob/master/LICENSE">MIT License</a></p>
+            <p><b>Privacy Policy:</b> I just collect whatever Apache collects, which is only your IP address, time you visited the site, and your user agent. and which links you visit. Nothing personally identifiable. No Stock Market Game login or personally identifiable information is kept or stored at all.<br>
+            Additionally, in case of an error, some data may be sent to a third party error management system called <a href="https://sentry.io">Sentry.</a> The only data sent is non personally identifying information, and is completely anonymous. This data is used for bug fixing only, and is not seen by any third parties.</p>
+            <p>See a <a href="{{ url_for('demo') }}">minimal demo</a> without having to log in.</p>
+    </footer>
+</main>
+</body>
+</html>
