@@ -13,10 +13,10 @@ async function update_current_price(stock_id, button) {
 
     const response = await fetch(`${path_name}/price?ticker=${ticker}`);
     if (response.status == 503) {
+        button.style.display = 'unset';
         window.alert('Sorry! I\'ve used up my limit on fetching stock data! Refresh and try again in 60 seconds. :)');
         return false;
     }
-    button.style.display = 'none';
     const price = parseFloat((await response.json()).price);
 
     // Get the element that holds the current price data. 
