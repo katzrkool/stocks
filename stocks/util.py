@@ -36,16 +36,17 @@ class Analyzer:
         if 'transactions' in data:
             profitable_sell_prices = {}
             for i in data['transactions']['record']:
-                netcost = float(i['netcost'])
+                netcost = abs(float(i['netcost']))
                 stock_id = i['id']
+                shares_value = float(i['shares_value'].replace('$', '').replace(',', ''))
                 # Multiply the base net cost by the SEC fee, add $10, and divide by amount of shares
                 if i['position'].lower().strip() == 'short':
-                    profitable_sell_prices[stock_id] = round(((netcost - 10) - 0.01 - \
-                    (self.SEC_FEE_PER_DOLLAR * netcost)) / float(i['shares_value']), 2)
+                    profitable_sell_prices[stock_id] = str(round(((netcost - 10) - 0.01 - \
+                    (self.SEC_FEE_PER_DOLLAR * netcost)) / shares_value, 2)).replace('-', '')
 
                 else:
-                    profitable_sell_prices[stock_id] = round(((netcost + 10) + 0.01 + \
-                        (self.SEC_FEE_PER_DOLLAR * netcost)) / float(i['shares_value']), 2)
+                    profitable_sell_prices[stock_id] = str(round(((netcost + 10) + 0.01 + \
+                        (self.SEC_FEE_PER_DOLLAR * netcost)) / shares_value, 2)).replace('-', '')
             return profitable_sell_prices
 
         return {}

@@ -68,7 +68,8 @@ def index():
             return render_template('index.html', data=scraped_data, highlight=highlight,
                                    calculate_fees=analyzer.calculate_fees,
                                    most_recent_close_time=most_recent_close_time,
-                                   sec_fee=config['sec_fee_per_dollar'])
+                                   sec_fee=config['sec_fee_per_dollar'],
+                                   bool=bool)
         except AuthError:
             return 'Incorrect Username or Password', 403
 
@@ -103,7 +104,8 @@ def demo():
     return render_template('index.html', data=scraped_data, highlight=highlight,
                            calculate_fees=analyzer.calculate_fees,
                            most_recent_close_time=most_recent_close_time,
-                           sec_fee=config['sec_fee_per_dollar'])
+                           sec_fee=config['sec_fee_per_dollar'],
+                           bool=bool)
 
 
 # for highlighting units

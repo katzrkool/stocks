@@ -61,18 +61,18 @@
                         to the highlight function to determine the color of the paragraph #}
                     <strong>Unrealized Gains/Losses:</strong>
                     {# Say if the stock has gone up or down #}
-                    {{ stock.ticker }} has gone <span class="updown">{{ 'down' if stock.per_unrealized_gainslosses.startswith('-') else 'up' }}</span>
+                    {{ stock.ticker }} has gone <span class="updown">{{ 'down' if (bool(stock.per_unrealized_gainslosses.startswith('-')) != bool(stock.position.lower() == 'short')) else 'up' }}</span>
                     {# and the percentage #}
                     <span class="gainslosses_percent">{{stock.per_unrealized_gainslosses.replace('-', '') }}</span>% since purchase.<br>
                     {# Say if it's a profit or loss or loss #}
-                    This resulted in a <span class="profit_loss">{{ 'loss' if stock.unrealized_gainslosses.startswith('-') else 'profit'}}</span> 
+                    This resulted in a <span class="profit_loss">{{ 'loss' if stock.per_unrealized_gainslosses.startswith('-') else 'profit'}}</span> 
                     {# Then say how much in dollars we've profited or lost #}
                     of <span class="profit_total">{{ stock.unrealized_gainslosses.replace('-','') }} </span> 
                     {# Fnally, say what the profit/loss would be if sold #}
-                    ($<span class="profit_loss_sold">{{((((stock.unrealized_gainslosses.replace('$', ''))|float - calculate_fees(stock.currentvalue|float))|string).replace('-', '')) }}</span> if sold)
+                    ($<span class="profit_loss_sold">{{((((stock.unrealized_gainslosses.replace('$', ''))|float - calculate_fees(stock.currentvalue|float))|round(2)|string).replace('-' if stock.per_unrealized_gainslosses.startswith('-') else '' , '')) }}</span> if sold)
                 </p>
 
-                <button onclick="update_current_price('{{ stock.id }}', this);">Update Current Price</button>
+                <button style="display: {{ 'none' if '_' in stock.ticker else 'unset' }}" onclick="update_current_price('{{ stock.id }}', this);">Update Current Price</button>
             </div>
         {% endfor %}
     {% endif %}
