@@ -137,6 +137,7 @@ class Scraper:
         data.pop('account_info')
         if data['transactions']:
             data = data['transactions']['record']
+            data = [data] if isinstance(data, dict) else data
 
             return [self.format_realized_values(i) for i in data]
         return []
