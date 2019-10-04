@@ -66,5 +66,5 @@ async function update_current_price(stock_id, button) {
 
     // Update the part with Fees
     stock_container.querySelector('.profit_loss_sold').textContent = 
-        ((price * shares_owned * difference_percent * (difference_percent < 0 ? -1 : 1)) - ((SEC_FEE_PER_DOLLAR * shares_owned * price) + 10)).toFixed(2).replace((difference < 0 ? '-': ''), '');
+        ((price * shares_owned * difference_percent) - (((SEC_FEE_PER_DOLLAR * shares_owned * price) + 10) * (difference < 0 ? -1 : 1))).toFixed(2).replace((difference < 0 ? '-': ''), '');
 }
