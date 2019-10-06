@@ -34,16 +34,16 @@
         <h2>General Stock Info</h2>
         <p><strong>Stock Count:</strong> {{data.transactions.record|length if data.transactions else '0'}}</p>
         {% if data.analytics.topPerformer %}
-            <p><strong>Top Performer:</strong> <a class="{{ highlight(data.analytics.topPerformer.per_unrealized_gainslosses)}}" href="#{{data.analytics.topPerformer.id}}">{{data.analytics.topPerformer.ticker}}: {{ data.analytics.topPerformer.per_unrealized_gainslosses }}%</a></p>
+            <p><strong>Top Performer:</strong> <a id="top-performer" class="{{ highlight(data.analytics.topPerformer.per_unrealized_gainslosses)}}" href="#{{data.analytics.topPerformer.id}}">{{data.analytics.topPerformer.ticker}}: {{ data.analytics.topPerformer.per_unrealized_gainslosses }}%</a></p>
         {% endif %}
         {% if data.analytics.worstPerformer %}
-        <p><strong>Worst Performer:</strong> <a class="{{ highlight(data.analytics.worstPerformer.per_unrealized_gainslosses)}}" href="#{{data.analytics.worstPerformer.id}}">{{data.analytics.worstPerformer.ticker}}: {{ data.analytics.worstPerformer.per_unrealized_gainslosses }}%</a></p>
+        <p><strong>Worst Performer:</strong> <a id="worst-performer" class="{{ highlight(data.analytics.worstPerformer.per_unrealized_gainslosses)}}" href="#{{data.analytics.worstPerformer.id}}">{{data.analytics.worstPerformer.ticker}}: {{ data.analytics.worstPerformer.per_unrealized_gainslosses }}%</a></p>
         {% endif %}
     </div>
     {% if data.transactions and data.transactions.record|length > 0 %}
     <h1 id="breakdown">Stock Breakdown</h1>
         {% for stock in data.transactions.record %}
-            <div id="{{ stock.id }}" class="surround">
+            <div id="{{ stock.id }}" class="surround breakdown">
                 <h2 class="ticker">{{ stock.ticker }}</h2>
                 <p><strong>Stock Type:</strong> <span class="position">{{ stock.position }}</span></p>
                 <p><strong>Shares Owned:</strong> <span class="shares_owned">{{ stock.shares_value.replace('-','') }}</span></p>

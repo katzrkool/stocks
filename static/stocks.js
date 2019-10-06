@@ -1,7 +1,8 @@
+/* eslint no-unused-vars: 0 */
 const SEC_FEE_PER_DOLLAR = parseFloat(document.getElementById('sec_fee').textContent);
 
 async function update_current_price(stock_id, button) {
-    const stock_container = document.getElementById(stock_id)
+    const stock_container = document.getElementById(stock_id);
     const ticker = stock_container.querySelector('.ticker').textContent;
 
     // Hit my api to get latest data
@@ -34,37 +35,66 @@ async function update_current_price(stock_id, button) {
     const position = stock_container.querySelector('.position').textContent;
 
     // Now for gains/losses, so start by getting purchase price
-    const purchase_price = parseFloat(stock_container.querySelector('.purchase_price').textContent)
+    const purchase_price = parseFloat(stock_container.querySelector('.purchase_price').textContent);
 
     let difference = price - purchase_price;
 
     // Make the difference negative of what it is if we are short
     if (position.toLowerCase().trim() == 'short') difference = -difference;
 
-    const difference_percent = (price / purchase_price - 1)
+    const difference_percent = (price / purchase_price - 1);
 
     const formatted_difference_percent = String((difference_percent * 100).toFixed(3)).replace('-', '');
 
     // Update the color of gains/losses
     stock_container.querySelector('.gainslosses').className = 
-        `gainslosses ${difference < 0 ? "negative" : "positive"}`;
+        `gainslosses ${difference < 0 ? 'negative' : 'positive'}`;
 
     // Update the part that says up or down
-    stock_container.querySelector('.updown').textContent = difference_percent < 0 ? "down": "up";
+    stock_container.querySelector('.updown').textContent = difference_percent < 0 ? 'down': 'up';
 
     // Update the percentage
     stock_container.querySelector('.gainslosses_percent').textContent = formatted_difference_percent;
 
     // Update the part that says profit or loss
-    stock_container.querySelector('.profit_loss').textContent = difference < 0 ? "loss": "profit";
+    stock_container.querySelector('.profit_loss').textContent = difference < 0 ? 'loss': 'profit';
 
     // Get shares owned
-    const shares_owned = parseFloat(stock_container.querySelector('.shares_owned').textContent)
+    const shares_owned = parseFloat(stock_container.querySelector('.shares_owned').textContent);
 
     // Update the part that says in dollars how much we've profited / lost
-    stock_container.querySelector('.profit_total').textContent = '$' + String((price * shares_owned * difference_percent).toFixed(2)).replace('-', '')
+    stock_container.querySelector('.profit_total').textContent = '$' + String((price * shares_owned * difference_percent).toFixed(2)).replace('-', '');
 
     // Update the part with Fees
     stock_container.querySelector('.profit_loss_sold').textContent = 
         ((price * shares_owned * difference_percent) - (((SEC_FEE_PER_DOLLAR * shares_owned * price) + 10) * (difference < 0 ? -1 : 1))).toFixed(2).replace((difference < 0 ? '-': ''), '');
+
+    update_performer();
+}
+
+function update_performer() {
+    const transactions = document.getElementsByClassName('surround breakdown');
+    let topScore, worstScore;
+    let topEle, worstEle;
+    for (const ele of transactions) {
+        const gains = parseFloat(ele.querySelector('.gainslosses_percent').textContent) * (ele.querySelector('.updown').textContent == 'up' ? 1 : -1);
+        if (!topEle || gains > topScore) {
+            topEle = ele;
+            topScore = gains;
+        }
+        if (!worstEle || gains < worstScore) {
+            worstEle = ele;
+            worstScore = gains;
+        }
+    }
+
+    for (const ele of [topEle, worstEle]) {
+        const performerEle = document.getElementById(`${ele == topEle ? 'top' : 'worst'}-performer`);
+        const gains = ele.querySelector('.gainslosses_percent').textContent;
+        const positive = ele.querySelector('.updown').textContent == 'up';
+        performerEle.textContent = `${ele.querySelector('.ticker').textContent}: ${positive ? '' : '-'}${gains}%`;
+        performerEle.className = positive ? 'positive' : 'negative';
+        performerEle.href = `#${ele.id}`;
+    }
+    
 }
