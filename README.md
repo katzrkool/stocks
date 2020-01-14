@@ -1,4 +1,5 @@
 # Stock Market Game Dashboard
+## This project has been archived and is no longer maintained
 An alternative dashboard for the [Stock Market Game](https://www.stockmarketgame.org/) that provides easier viewing and more insights
 
 # Overview
